@@ -23,15 +23,6 @@
                 <configuration>
                     <mainClass>com.scalebit.spreq.Main</mainClass>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>package</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

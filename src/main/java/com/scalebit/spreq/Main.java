@@ -1,23 +1,32 @@
 package com.scalebit.spreq;
 
+import com.scalebit.spreq.monitor.PlayerEvent;
+import com.scalebit.spreq.monitor.PlayerEventListener;
+import com.scalebit.spreq.monitor.PlayerMonitor;
+import com.scalebit.spreq.monitor.spotify.SpotifyLogFileMonitor;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+import java.util.HashMap;
+import java.util.Map;
 
-    @Override
-    public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
-        primaryStage.show();
-    }
+public class Main  {
 
 
     public static void main(String[] args) {
-        launch(args);
+
+        PlayerMonitor monitor = new SpotifyLogFileMonitor();
+        Map<String,String> properties = new HashMap<String, String>();
+        properties.put("fileName", "scripts/spotify.log");
+        monitor.start(properties, new PlayerEventListener() {
+            @Override
+            public void onEvent(PlayerEvent event) {
+                System.out.println(event);
+            }
+        });
+
     }
 }

@@ -57,6 +57,15 @@ public class SpotifyLogFileMonitor implements PlayerMonitor {
     }
 
     public static PlayerEvent parse(String line) {
-        return new PlayerEvent();
+        System.out.println(line);
+        String artist = "unknown";
+        String title = "unknown";
+        if (line.startsWith("playing") || line.startsWith("paused")) {
+            String[] parts = line.split(";");
+            title = parts[2];
+            artist = parts[3];
+
+        }
+        return new PlayerEvent(artist, title);
     }
 }

@@ -30,24 +30,30 @@ public class SpotifyLogFileMonitor implements PlayerMonitor {
         Tailer tailer = Tailer.create(file, new TailerListener() {
             @Override
             public void init(Tailer tailer) {
+                System.out.println("init: " + tailer);
             }
 
             @Override
             public void fileNotFound() {
+                System.out.println("file not found");
             }
 
             @Override
             public void fileRotated() {
+                System.out.println("file rotated");
             }
 
             @Override
             public void handle(String line) {
+                System.out.println("handle");
                 PlayerEvent event = parse(line);
                 listener.onEvent(event);
             }
 
             @Override
             public void handle(Exception e) {
+                System.out.println("exception: " + e);
+                e.printStackTrace();
             }
         });
 
@@ -57,13 +63,17 @@ public class SpotifyLogFileMonitor implements PlayerMonitor {
     }
 
     public static PlayerEvent parse(String line) {
-        System.out.println(line);
+        System.out.println("parsing line: '" + line + "'");
         String artist = "unknown";
         String title = "unknown";
         if (line.startsWith("playing") || line.startsWith("paused")) {
-            String[] parts = line.split(";");
-            title = parts[2];
-            artist = parts[3];
+            String[] parts = line.split("\\|");
+            if (parts.length == 5) {
+                title = parts[2];
+                artist = parts[3];
+            } else {
+                System.out.println("err: length is " + parts.length);
+            }
 
         }
         return new PlayerEvent(artist, title);

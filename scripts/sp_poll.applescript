@@ -24,9 +24,9 @@ repeat
 				set albumname to album of current track
 				set track_id to id of current track
 				if player state is playing then
-					set output to "playing;" & track_id & ";" & trackname & ";" & artistname & ";" & albumname
+					set output to "playing|" & track_id & "|" & trackname & "|" & artistname & "|" & albumname
 				else if player state is paused then
-					set output to "paused;" & track_id & ";" & trackname & " | " & artistname & " | " & albumname
+					set output to "paused|" & track_id & "|" & trackname & "|" & artistname & "|" & albumname
 				end if
 			end if
 		end tell

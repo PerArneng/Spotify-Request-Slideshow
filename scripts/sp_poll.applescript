@@ -52,7 +52,7 @@ on write_to_file(this_data, target_file, append_data) -- (string, file path as s
 		if append_data is false then
 			set eof of the open_target_file to 0
 		end if
-		write this_data to the open_target_file starting at eof
+		write this_data to the open_target_file as «class utf8» starting at eof
 		close access the open_target_file
 		return true
 	on error errmsg

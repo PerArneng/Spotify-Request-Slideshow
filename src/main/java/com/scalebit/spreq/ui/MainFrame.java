@@ -2,14 +2,21 @@ package com.scalebit.spreq.ui;
 
 import com.scalebit.spreq.monitor.PlayerEvent;
 import com.scalebit.spreq.monitor.PlayerEventListener;
+import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class MainFrame extends JFrame implements PlayerEventListener {
 
-    JLabel authorLabel = new JLabel("", JLabel.CENTER);
-    JLabel titleLabel = new JLabel("", JLabel.CENTER);
+    private final JLabel authorLabel = new JLabel("", JLabel.CENTER);
+    private final JLabel titleLabel = new JLabel("", JLabel.CENTER);
+    private final JLabel requesterLabel = new JLabel("", JLabel.CENTER);
+    private final Font textFont = new Font(getFontFamily(), Font.PLAIN, 50);
+
+    private final Color backgroundColor = Color.GRAY;
+    private final Color foregroundColor = Color.WHITE;
+
 
     public MainFrame(String title) throws HeadlessException {
         super(title);
@@ -21,27 +28,31 @@ public class MainFrame extends JFrame implements PlayerEventListener {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
-        authorLabel.setBackground(Color.BLACK);
-        authorLabel.setForeground(Color.WHITE);
-        authorLabel.setFont(new Font(getFontFamily(), Font.PLAIN, 50));
-        authorLabel.setOpaque(true);
+        authorLabel.setForeground(foregroundColor);
+        authorLabel.setFont(textFont);
 
-        titleLabel.setBackground(Color.BLACK);
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setFont(new Font(getFontFamily(), Font.PLAIN, 50));
-        titleLabel.setOpaque(true);
+        titleLabel.setForeground(foregroundColor);
+        titleLabel.setFont(textFont);
+
+        requesterLabel.setForeground(foregroundColor);
+        requesterLabel.setFont(textFont);
 
         JPanel panel = new JPanel();
+        panel.setLayout(new MigLayout("debug, flowy"));
+        panel.setOpaque(true);
+        panel.setBackground(backgroundColor);
         panel.setLayout(new FlowLayout());
         panel.add(authorLabel);
         panel.add(titleLabel);
+        panel.add(requesterLabel);
+        //panel.setBorder(new LineBorder(Color.BLACK));
 
         this.setContentPane(panel);
 
     }
 
-    private String getFontFamily() {
-        String def = "Zapfino";
+    private static String getFontFamily() {
+        String def = "Serif"; //"Zapfino";
         String fonts[] =
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 
@@ -59,10 +70,24 @@ public class MainFrame extends JFrame implements PlayerEventListener {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                authorLabel.setText(event.getArtist());
-                titleLabel.setText(event.getTitle());
+                authorLabel.setText("");
+                titleLabel.setText("");
+                requesterLabel.setText("");
+
+                authorLabel.setText(fixStringLength(event.getArtist()));
+                titleLabel.setText(fixStringLength(event.getTitle()));
+                String requestor = event.getRequester();
+                if (requestor != null) {
+                    requesterLabel.setText(
+                            String.format("Önskad av: %s", fixStringLength(event.getRequester()))
+                    );
+                }
 
             }
         });
+    }
+
+    private static String fixStringLength(String str) {
+        return str.length() > 30 ? str.substring(0, 30) + "..." : str;
     }
 }

@@ -1,35 +1,44 @@
 package com.scalebit.spreq;
 
-import com.scalebit.spreq.monitor.PlayerEvent;
-import com.scalebit.spreq.monitor.PlayerEventListener;
 import com.scalebit.spreq.monitor.PlayerMonitor;
 import com.scalebit.spreq.monitor.spotify.SpotifyLogFileMonitor;
+import com.scalebit.spreq.requests.PropertyBasedRequestDb;
+import com.scalebit.spreq.requests.RequestDb;
 import com.scalebit.spreq.ui.MainFrame;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class Main  {
 
+    private static Logger LOG = Logger.getLogger(Main.class.getName());
 
-    static PlayerMonitor monitor = new SpotifyLogFileMonitor();
+    static RequestDb wishDb = null;
+    static PlayerMonitor monitor;
 
 
     public static void main(String[] args) {
 
-        System.out.println("Default Charset=" + Charset.defaultCharset());
-        System.out.println("file.encoding=" + System.getProperty("file.encoding"));
-        System.out.println("Default Charset=" + Charset.defaultCharset());
-        System.out.println("Default Charset in Use=" + getDefaultCharSet());
+        try {
+            wishDb = new PropertyBasedRequestDb("sampledata/wishlist.properties");
+        } catch (IOException e) {
+            LOG.severe(e.getMessage());
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
+        monitor = new SpotifyLogFileMonitor(wishDb);
+
+        LOG.info("Default Charset=" + Charset.defaultCharset());
+        LOG.info("file.encoding=" + System.getProperty("file.encoding"));
+        LOG.info("Default Charset=" + Charset.defaultCharset());
+        LOG.info("Default Charset in Use=" + getDefaultCharSet());
 
         Map<String,String> properties = new HashMap<String, String>();
         properties.put("fileName", "scripts/spotify.log");
@@ -48,7 +57,7 @@ public class Main  {
             //myDevice.setFullScreenWindow(null);
         }
 
-         System.out.println("end of app");
+         LOG.info("end of app");
 
     }
 

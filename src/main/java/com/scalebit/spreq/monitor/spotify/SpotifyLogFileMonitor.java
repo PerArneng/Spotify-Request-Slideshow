@@ -73,7 +73,7 @@ public class SpotifyLogFileMonitor implements PlayerMonitor {
     }
 
     public static PlayerEvent parse(String line, RequestDb wishDb) {
-        LOG.info("parsing line: '" + line + "'");
+        LOG.fine("parsing line: '" + line + "'");
         String artist = "unknown";
         String title = "unknown";
         String requester = "";

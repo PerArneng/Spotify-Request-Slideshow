@@ -4,10 +4,13 @@ import com.scalebit.spreq.monitor.PlayerMonitor;
 import com.scalebit.spreq.monitor.spotify.SpotifyLogFileMonitor;
 import com.scalebit.spreq.requests.PropertyBasedRequestDb;
 import com.scalebit.spreq.requests.RequestDb;
+import com.scalebit.spreq.slideshow.FolderPhotoProvider;
+import com.scalebit.spreq.slideshow.PhotoProvider;
 import com.scalebit.spreq.ui.MainFrame;
 
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
@@ -43,21 +46,14 @@ public class Main  {
         Map<String,String> properties = new HashMap<String, String>();
         properties.put("fileName", "scripts/spotify.log");
 
-        MainFrame mainFrame = new MainFrame("Spreq");
+        PhotoProvider photoProvider = new FolderPhotoProvider(new File("photos"));
+
+        MainFrame mainFrame = new MainFrame("Spreq", photoProvider);
         monitor.start(properties, mainFrame);
 
         mainFrame.setVisible(true);
 
-        GraphicsDevice myDevice =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-
-        try {
-            //    myDevice.setFullScreenWindow(mainFrame);
-        } finally {
-            //myDevice.setFullScreenWindow(null);
-        }
-
-         LOG.info("end of app");
+        LOG.info("end of app");
 
     }
 

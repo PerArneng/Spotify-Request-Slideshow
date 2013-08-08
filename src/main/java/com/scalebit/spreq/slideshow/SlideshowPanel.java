@@ -13,8 +13,9 @@ public class SlideShowPanel extends JPanel {
     private Thread flipThread;
     private CardLayout cardLayout;
     private final java.util.List<String> cardNames = new ArrayList<String>();
+    private final java.util.List<ImagePanel> cards = new ArrayList<ImagePanel>();
     private int selectedCard = 0;
-    private static final int SLEEP_TIME = 2000; //milliseconds
+    private static final int SLEEP_TIME = 7000; //milliseconds
 
     public SlideShowPanel(PhotoProvider provider) {
         this.setOpaque(true);
@@ -30,6 +31,7 @@ public class SlideShowPanel extends JPanel {
             String cardName = photo.getAbsolutePath();
             this.add(imagePanel, cardName);
             this.cardNames.add(cardName);
+            this.cards.add(imagePanel);
         }
 
         flipThread = new Thread(new Runnable() {
@@ -66,5 +68,11 @@ public class SlideShowPanel extends JPanel {
         });
         flipThread.start();
 
+    }
+
+    public void setMainText(String text) {
+        for (ImagePanel imagePanel : this.cards) {
+            imagePanel.setMainText(text);
+        }
     }
 }

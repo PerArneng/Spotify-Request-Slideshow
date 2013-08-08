@@ -14,15 +14,6 @@ import java.util.logging.Logger;
 
 public class MainFrame extends JFrame implements PlayerEventListener {
 
-    private final JLabel songLabel = new JLabel("", JLabel.CENTER);
-    private final JLabel requesterLabel = new JLabel("", JLabel.CENTER);
-    private final Font songFont = new Font(getFontFamily(), Font.PLAIN, 30);
-    private final Font requestFont = new Font(getFontFamily(), Font.PLAIN, 25);
-
-
-    private final Color backgroundColor = Color.BLACK;
-    private final Color foregroundColor = Color.WHITE;
-
     private static final int DEFAULT_WIDTH = 800;
     private static final int DEFAULT_HEIGHT = 600;
 
@@ -40,25 +31,12 @@ public class MainFrame extends JFrame implements PlayerEventListener {
         this.setBounds(screenBounds);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        songLabel.setForeground(foregroundColor);
-        songLabel.setFont(songFont);
 
-        requesterLabel.setForeground(foregroundColor);
-        requesterLabel.setFont(requestFont);
 
         slideshowPanel = new SlideShowPanel(photoProvider);
 
-        JPanel textPanel = new JPanel(new MigLayout("", "[grow]","[][][]"));
-        textPanel.setOpaque(true);
-        textPanel.setBackground(backgroundColor);
-        textPanel.add(songLabel, "wrap, grow");
-        textPanel.add(requesterLabel, "grow");
 
-        JPanel xpanel = new JPanel(new BorderLayout());
-        xpanel.add(slideshowPanel, BorderLayout.CENTER);
-        xpanel.add(textPanel, BorderLayout.SOUTH);
-
-        this.setContentPane(xpanel);
+        this.setContentPane(slideshowPanel);
 
     }
 
@@ -91,39 +69,24 @@ public class MainFrame extends JFrame implements PlayerEventListener {
         return screenBounds;
     }
 
-    private static String getFontFamily() {
-        String def = "Zapfino";
-        String fonts[] =
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-
-        for ( int i = 0; i < fonts.length; i++ )
-        {
-            if (fonts[i].equals(def)) {
-                return def;
-            }
-        }
-        return "Serif";
-    }
 
     @Override
     public void onEvent(final PlayerEvent event) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                songLabel.setText("");
-                requesterLabel.setText("");
 
-                songLabel.setText(fixStringLength(event.getArtist()) + " - " +
-                                    fixStringLength(event.getTitle()));
+                String songText = fixStringLength(event.getArtist()) + " - " +
+                                    fixStringLength(event.getTitle());
 
                 String requestor = event.getRequester();
+                String requestorText = "~";
                 if (requestor != null) {
-                    requesterLabel.setText(
-                            String.format("Önskad av: %s", fixStringLength(event.getRequester()))
-                    );
-                } else {
-                    requesterLabel.setText(" ~ ");
+                    requestorText =
+                            String.format("Önskad av: %s", fixStringLength(event.getRequester()));
                 }
+
+                slideshowPanel.setMainText(String.format("%s (%s)", songText, requestorText));
 
             }
         });

@@ -13,13 +13,21 @@ import java.io.File;
  */
 public class ImagePanel extends JPanel {
 
+    public static final Color TEXT_BACKGROUND_COLOR = new Color(0, 0, 0, 150);
+    public static final Color TEXT_FOREGROUND = Color.WHITE;
     private final Image image;
     private final int imageWidth;
     private final int imageHeight;
 
+    private double aspectRatio = 0.0d;
+
+    private final Font TEXT_FONT = new Font("Zapfino", Font.PLAIN, 25);
+
+    private String mainText = "Some Artist - Some Song (Önskad Av: John)";
+
     public ImagePanel(File photo) {
 
-        this.setBackground(new Color((int)(Math.random()*200), (int)(Math.random()*200), (int)(Math.random()*200)));
+        this.setBackground(Color.BLACK);
         this.setOpaque(true);
 
         ImageIcon imageIcon = new ImageIcon(photo.getAbsolutePath());
@@ -35,13 +43,48 @@ public class ImagePanel extends JPanel {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        int panelWidth = this.getWidth();
-        int panelHeight = this.getHeight();
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        Rectangle imageBounds = RectangleUtil.fit(new Rectangle(0,0, imageWidth, imageHeight), this.getBounds());
+
+        double newAspectRatio = imageBounds.getWidth()/imageBounds.getHeight();
+
+        Image imageToDraw = this.image;
+        if (newAspectRatio != this.aspectRatio) {
+            imageToDraw = this.image.getScaledInstance(imageBounds.width, imageBounds.height, Image.SCALE_SMOOTH);
+            this.aspectRatio = newAspectRatio;
+        }
+        g2.drawImage(imageToDraw, imageBounds.x, imageBounds.y, imageBounds.width, imageBounds.height, this);
 
 
-        Rectangle imageBounds = calcCenter(panelWidth, panelHeight, imageWidth, imageHeight, false);
+        FontMetrics fontMetrics = g2.getFontMetrics(TEXT_FONT);
+        int mainTextWidth = fontMetrics.stringWidth(mainText);
+        int mainTextHeight = fontMetrics.getHeight();
+        Rectangle mainTextBounds = RectangleUtil.centerInRect(
+                                                    new Rectangle(0,0,mainTextWidth,mainTextHeight),
+                                                    imageBounds
+                                   );
 
-        g2.drawImage(image, imageBounds.x, imageBounds.y, imageBounds.width, imageBounds.height, this);
+
+
+        mainTextBounds.y = this.getHeight() - mainTextHeight - 40;
+
+
+        Rectangle textBackground = new Rectangle(0, mainTextBounds.y, this.getWidth(), mainTextBounds.height);
+        textBackground.grow(10, 10);
+
+        g2.setColor(TEXT_BACKGROUND_COLOR);
+        g2.fill(textBackground);
+
+        g2.setColor(TEXT_FOREGROUND);
+        g2.setFont(TEXT_FONT);
+        g2.drawString(mainText, mainTextBounds.x, mainTextBounds.y + (mainTextHeight/2));
+
+    }
+
+    public void setMainText(String text) {
+        this.mainText = text;
+        this.repaint();
     }
 
     /**

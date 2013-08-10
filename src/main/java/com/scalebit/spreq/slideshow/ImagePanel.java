@@ -13,8 +13,8 @@ import java.io.File;
  */
 public class ImagePanel extends JPanel {
 
-    public static final Color TEXT_BACKGROUND_COLOR = new Color(0, 0, 0, 150);
-    public static final Color TEXT_FOREGROUND = Color.WHITE;
+    public static final Color TEXT_BACKGROUND_COLOR = new Color(0, 0, 0, 100);
+    public static final Color TEXT_FOREGROUND = Color.ORANGE;
     private final Image image;
     private final int imageWidth;
     private final int imageHeight;
@@ -67,7 +67,7 @@ public class ImagePanel extends JPanel {
 
 
 
-        mainTextBounds.y = this.getHeight() - mainTextHeight - 40;
+        mainTextBounds.y = this.getHeight() - mainTextHeight - 60;
 
 
         Rectangle textBackground = new Rectangle(0, mainTextBounds.y, this.getWidth(), mainTextBounds.height);
@@ -76,8 +76,11 @@ public class ImagePanel extends JPanel {
         g2.setColor(TEXT_BACKGROUND_COLOR);
         g2.fill(textBackground);
 
-        g2.setColor(TEXT_FOREGROUND);
+
         g2.setFont(TEXT_FONT);
+        g2.setColor(TEXT_BACKGROUND_COLOR.darker().darker().darker().darker());
+        g2.drawString(mainText, mainTextBounds.x+5, mainTextBounds.y+5 + (mainTextHeight/2));
+        g2.setColor(TEXT_FOREGROUND);
         g2.drawString(mainText, mainTextBounds.x, mainTextBounds.y + (mainTextHeight/2));
 
     }

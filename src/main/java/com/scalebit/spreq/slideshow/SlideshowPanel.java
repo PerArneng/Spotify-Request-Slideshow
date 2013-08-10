@@ -15,7 +15,7 @@ public class SlideShowPanel extends JPanel {
     private final java.util.List<String> cardNames = new ArrayList<String>();
     private final java.util.List<ImagePanel> cards = new ArrayList<ImagePanel>();
     private int selectedCard = 0;
-    private static final int SLEEP_TIME = 7000; //milliseconds
+    private static final int SLEEP_TIME = 10000; //milliseconds
 
     public SlideShowPanel(PhotoProvider provider) {
         this.setOpaque(true);

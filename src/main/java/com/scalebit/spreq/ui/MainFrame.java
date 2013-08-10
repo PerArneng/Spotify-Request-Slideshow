@@ -1,5 +1,8 @@
 package com.scalebit.spreq.ui;
 
+import com.apple.eawt.AppEvent;
+import com.apple.eawt.FullScreenAdapter;
+import com.apple.eawt.FullScreenUtilities;
 import com.scalebit.spreq.monitor.PlayerEvent;
 import com.scalebit.spreq.monitor.PlayerEventListener;
 import com.scalebit.spreq.slideshow.PhotoProvider;
@@ -8,6 +11,8 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,9 +26,23 @@ public class MainFrame extends JFrame implements PlayerEventListener {
 
     private static Logger LOG = Logger.getLogger(MainFrame.class.getName());
 
+    private Timer timer;
 
     public MainFrame(String title, PhotoProvider photoProvider) throws HeadlessException {
         super(title);
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu windowMenu = new JMenu("Window");
+        menuBar.add(windowMenu);
+        JMenuItem undecoratedMenuItem = new JMenuItem("Toggle Decorated");
+        windowMenu.add(undecoratedMenuItem);
+        undecoratedMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainFrame.this.setUndecorated(!MainFrame.this.isUndecorated());
+            }
+        });
+        //this.setJMenuBar(menuBar);
 
         enableOSXFullscreen(this);
 
@@ -44,12 +63,13 @@ public class MainFrame extends JFrame implements PlayerEventListener {
      * @param window
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static void enableOSXFullscreen(Window window) {
+    public  void enableOSXFullscreen(final Window window) {
         try {
             Class util = Class.forName("com.apple.eawt.FullScreenUtilities");
             Class params[] = new Class[]{Window.class, Boolean.TYPE};
             Method method = util.getMethod("setWindowCanFullScreen", params);
             method.invoke(util, window, true);
+
         } catch (ClassNotFoundException e1) {
             e1.printStackTrace();
         } catch (Exception e) {
@@ -57,6 +77,8 @@ public class MainFrame extends JFrame implements PlayerEventListener {
         }
     }
 
+
+    
     private Rectangle calculateBounds() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Rectangle screenBounds = new Rectangle(0,0, screenSize.width, screenSize.height);
@@ -83,7 +105,7 @@ public class MainFrame extends JFrame implements PlayerEventListener {
                 String requestorText = "~";
                 if (requestor != null) {
                     requestorText =
-                            String.format("Önskad av: %s", fixStringLength(event.getRequester()));
+                            String.format("%s", fixStringLength(event.getRequester()));
                 }
 
                 slideshowPanel.setMainText(String.format("%s (%s)", songText, requestorText));
@@ -93,6 +115,6 @@ public class MainFrame extends JFrame implements PlayerEventListener {
     }
 
     private static String fixStringLength(String str) {
-        return str.length() > 30 ? str.substring(0, 30) + "..." : str;
+        return str.length() > 20 ? str.substring(0, 20) + "..." : str;
     }
 }

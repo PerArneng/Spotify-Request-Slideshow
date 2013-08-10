@@ -28,8 +28,23 @@ public class Main  {
 
     public static void main(String[] args) {
 
+        LOG.info("starting in: " + (new File(".")).getAbsolutePath());
+
+        ProgramArguments arguments = null;
+
         try {
-            wishDb = new PropertyBasedRequestDb("sampledata/wishlist.properties");
+            arguments = ProgramArguments.parse(args);
+        } catch (IllegalArgumentException ex) {
+            System.out.println("Usage: spreq <photo folder> <log file> <request file>");
+            ex.printStackTrace();
+            System.exit(-1);
+        }
+
+        try {
+            // "sampledata/wishlist.properties"
+            // "scripts/spotify.log"
+            // "photos"
+            wishDb = new PropertyBasedRequestDb(arguments.getRequesterFile().getAbsolutePath());
         } catch (IOException e) {
             LOG.severe(e.getMessage());
             e.printStackTrace();
@@ -44,9 +59,9 @@ public class Main  {
         LOG.info("Default Charset in Use=" + getDefaultCharSet());
 
         Map<String,String> properties = new HashMap<String, String>();
-        properties.put("fileName", "scripts/spotify.log");
+        properties.put("fileName", arguments.getLogFile().getAbsolutePath());
 
-        PhotoProvider photoProvider = new FolderPhotoProvider(new File("photos"));
+        PhotoProvider photoProvider = new FolderPhotoProvider(arguments.getPhotoFolder());
 
         MainFrame mainFrame = new MainFrame("Spreq", photoProvider);
         monitor.start(properties, mainFrame);
